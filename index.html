@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>나의 첫 홈페이지</title>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      min-height: 100vh;
+      margin: 0;
+      padding: 24px 16px;
+      box-sizing: border-box;
+      background-color: #fff7e8;
+      background-image: linear-gradient(180deg, #fff7e8 0%, #fbeff3 50%, #efeafb 100%);
+      color: #2f2a3a;
+      text-align: center;
+    }
+    .profile {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .email {
+      font-family: 'Dancing Script', cursive;
+      font-size: 28px;
+      color: #333333;
+      text-decoration: none;
+    }
+
+    /* ===== 홀로그램 프로필 사진 ===== */
+    .holo-profile {
+      --tx: 0;   /* 좌우 기울기 (-1 ~ 1) */
+      --ty: 0;   /* 위아래 기울기 (-1 ~ 1) */
+      --hyp: 0;  /* 얼마나 많이 기울었는지 (0 ~ 1) */
+      width: 200px;
+      height: 200px;
+      margin: 8px auto 0;
+      perspective: 600px;
+    }
+    .holo-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      overflow: hidden;
+      transform: rotateX(calc(var(--ty) * -14deg)) rotateY(calc(var(--tx) * 18deg));
+      box-shadow:
+        0 12px 28px rgba(0, 0, 0, 0.22),
+        0 0 calc(var(--hyp) * 36px) hsl(300 90% 62% / 0.45);
+    }
+    .holo-inner .profile {
+      display: block;
+      /* 아버님 머리가 오른쪽 위 끝에 있어서, 그림을 살짝 키우고 왼쪽 아래로 옮겨 두 분 얼굴이 동그라미 안에 들어오게 해요 */
+      transform: scale(1.14) translate(-6%, 6%);
+    }
+    /* 무지갯빛 반짝이 (기울이는 방향에 따라 색이 흘러가요) */
+    .holo-foil {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      pointer-events: none;
+      background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 14 -8.6'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E"),
+        repeating-linear-gradient(115deg, hsl(0 100% 62%) 0%, hsl(55 100% 62%) 4%, hsl(180 100% 62%) 8%, hsl(285 100% 62%) 12%, hsl(0 100% 62%) 16%);
+      background-size: 160px 160px, 300% 300%;
+      background-position: center, calc(50% + var(--tx) * 40%) calc(50% + var(--ty) * 40%);
+      background-blend-mode: screen;
+      mix-blend-mode: color-dodge;
+      opacity: calc(0.12 + var(--hyp) * 0.38);
+      filter: brightness(0.62) contrast(1.5) saturate(1.4);
+    }
+    /* 빛 반사 (기울이는 쪽으로 하얀 빛이 따라가요) */
+    .holo-glare {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      pointer-events: none;
+      background: radial-gradient(farthest-corner circle at calc(50% + var(--tx) * 48%) calc(50% + var(--ty) * 48%),
+        rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.28) 16%, transparent 52%);
+      mix-blend-mode: overlay;
+      opacity: calc(0.3 + var(--hyp) * 0.7);
+    }
+
+    /* ===== 아이콘 버튼 (마그네틱 글로우) ===== */
+    @property --glow-angle {
+      syntax: "<angle>";
+      initial-value: 0deg;
+      inherits: false;
+    }
+    .icon-row {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin: 24px 0;
+    }
+    .icon-btn {
+      position: relative;
+      isolation: isolate;
+      display: inline-flex;
+      width: 60px;
+      height: 60px;
+      padding: 2px;
+      box-sizing: border-box;
+      border-radius: 50%;
+      transition: transform 0.3s ease-out;
+    }
+    .icon-btn:focus-visible {
+      outline: 2px solid #333333;
+      outline-offset: 6px;
+    }
+    /* 빙글빙글 도는 빛 테두리 */
+    .glow-ring,
+    .glow-blur {
+      position: absolute;
+      border-radius: 50%;
+      background: conic-gradient(from var(--glow-angle), var(--ring));
+      animation: glow-spin 3s linear infinite;
+    }
+    .glow-ring {
+      inset: 0;
+      z-index: -1;
+    }
+    /* 같은 색을 흐리게 깔아서 빛이 번지는 느낌 */
+    .glow-blur {
+      inset: -6px;
+      z-index: -2;
+      opacity: 0.35;
+      filter: blur(12px);
+      transition: opacity 0.3s;
+    }
+    .icon-btn:hover .glow-blur,
+    .icon-btn:focus-visible .glow-blur {
+      opacity: 0.9;
+    }
+    /* 버튼 안쪽 (브랜드 색 + 아이콘) */
+    .glow-inner {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      border-radius: 50%;
+      background: var(--inner);
+    }
+    .glow-inner svg {
+      position: relative;
+      width: 28px;
+      height: 28px;
+      fill: white;
+    }
+    /* 마우스를 따라다니는 하얀 빛 */
+    .glow-light {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(40px circle at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, 0.35), transparent 70%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .icon-btn:hover .glow-light {
+      opacity: 1;
+    }
+    /* 누르면 퍼지는 물결 */
+    .glow-ripple {
+      position: absolute;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.4);
+      pointer-events: none;
+      animation: glow-ripple 0.7s ease-out forwards;
+    }
+
+    /* 버튼마다 색만 다르게 */
+    .youtube-btn {
+      --inner: #ff0000;
+      --ring: #ff0000, #ffb3b3, #ffffff, #ff4d4d, #ff0000;
+    }
+    .insta-btn {
+      --inner: linear-gradient(45deg, #f9ce34, #ee2a7b, #6228d7);
+      --ring: #f9ce34, #ee2a7b, #6228d7, #ee2a7b, #f9ce34;
+    }
+
+    .blog-btn {
+      --inner: #03c75a;
+      --ring: #03c75a, #b6f5d0, #ffffff, #2ee07f, #03c75a;
+    }
+    .blog-btn svg text {
+      font-family: Arial, sans-serif;
+      font-weight: 900;
+    }
+
+    @keyframes glow-spin {
+      to { --glow-angle: 360deg; }
+    }
+    @keyframes glow-ripple {
+      from { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+      to { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+    }
+    /* 움직임을 줄이도록 설정한 사람에게는 애니메이션을 멈춰요 */
+    @media (prefers-reduced-motion: reduce) {
+      .glow-ring, .glow-blur, .glow-ripple { animation: none; }
+      .icon-btn { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="holo-profile">
+    <div class="holo-inner">
+      <img class="profile" src="profile.jpg" alt="장미 꽃다발 앞에서 웃고 계신 부모님 그림">
+      <span class="holo-foil" aria-hidden="true"></span>
+      <span class="holo-glare" aria-hidden="true"></span>
+    </div>
+  </div>
+  <p><a class="email" href="mailto:jini1227@naver.com">jini1227@naver.com</a></p>
+
+  <div class="icon-row">
+    <a class="icon-btn youtube-btn" href="https://www.youtube.com/@AI_ohssaem" target="_blank" aria-label="내 유튜브 (새 탭)">
+      <span class="glow-ring" aria-hidden="true"></span>
+      <span class="glow-blur" aria-hidden="true"></span>
+      <span class="glow-inner">
+        <span class="glow-light" aria-hidden="true"></span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>
+      </span>
+    </a>
+    <a class="icon-btn insta-btn" href="#" target="_blank" aria-label="내 인스타그램 (새 탭)">
+      <span class="glow-ring" aria-hidden="true"></span>
+      <span class="glow-blur" aria-hidden="true"></span>
+      <span class="glow-inner">
+        <span class="glow-light" aria-hidden="true"></span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7zm5 3.5a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9zm0 2a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM17.3 5.5a1.2 1.2 0 1 1 0 2.4 1.2 1.2 0 0 1 0-2.4z"/></svg>
+      </span>
+    </a>
+    <a class="icon-btn blog-btn" href="#" target="_blank" aria-label="내 네이버 블로그 (새 탭)">
+      <span class="glow-ring" aria-hidden="true"></span>
+      <span class="glow-blur" aria-hidden="true"></span>
+      <span class="glow-inner">
+        <span class="glow-light" aria-hidden="true"></span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><text x="12" y="16" text-anchor="middle" font-size="10">blog</text></svg>
+      </span>
+    </a>
+  </div>
+
+  <h1>안녕하세요!</h1>
+  <p>여기는 부모님 첫 홈페이지예요.</p>
+
+  <script>
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // 홀로그램 프로필: 마우스 쪽으로 사진이 기울고, 가만히 있으면 천천히 흔들려요
+    (function () {
+      var holo = document.querySelector('.holo-profile');
+      if (!holo || reduceMotion) return; // 움직임 줄이기 설정이면 멈춘 채로 둬요
+
+      var pointer = { x: 0, y: 0, active: false };
+      var tiltX = { value: 0, speed: 0 };
+      var tiltY = { value: 0, speed: 0 };
+
+      // 스프링: 목표 쪽으로 당기고 조금씩 느려지게 해서, 살짝 지나쳤다 돌아오는 움직임을 만들어요
+      function spring(s, target) {
+        s.speed = (s.speed + (target - s.value) * 0.08) * 0.8;
+        s.value += s.speed;
+      }
+
+      // 사진 가운데에서 마우스가 얼마나 떨어져 있는지 -1 ~ 1로 바꿔요
+      window.addEventListener('pointermove', function (e) {
+        if (e.pointerType === 'touch') return;
+        var box = holo.getBoundingClientRect();
+        var reach = 260; // 이 거리(px)만큼 떨어지면 최대로 기울어요
+        pointer.x = Math.max(-1, Math.min(1, (e.clientX - (box.left + box.width / 2)) / reach));
+        pointer.y = Math.max(-1, Math.min(1, (e.clientY - (box.top + box.height / 2)) / reach));
+        pointer.active = true;
+      });
+      document.documentElement.addEventListener('pointerleave', function () {
+        pointer.active = false;
+      });
+
+      var start = performance.now();
+      function loop(now) {
+        var t = (now - start) / 1000;
+        var targetX = pointer.active ? pointer.x : Math.sin(t * 0.9) * 0.6;
+        var targetY = pointer.active ? pointer.y : Math.cos(t * 0.65) * 0.38;
+        spring(tiltX, targetX);
+        spring(tiltY, targetY);
+        holo.style.setProperty('--tx', tiltX.value.toFixed(4));
+        holo.style.setProperty('--ty', tiltY.value.toFixed(4));
+        holo.style.setProperty('--hyp', Math.min(1, Math.hypot(tiltX.value, tiltY.value)).toFixed(4));
+        requestAnimationFrame(loop);
+      }
+      requestAnimationFrame(loop);
+    })();
+
+    // 아이콘 버튼: 마우스 쪽으로 끌려오고, 누르면 물결이 퍼져요
+
+    document.querySelectorAll('.icon-btn').forEach(function (btn) {
+      var strength = 10; // 끌려가는 최대 거리(px)
+      var inner = btn.querySelector('.glow-inner');
+
+      btn.addEventListener('pointermove', function (e) {
+        var box = btn.getBoundingClientRect();
+        var x = (e.clientX - box.left) / box.width;
+        var y = (e.clientY - box.top) / box.height;
+        if (!reduceMotion) {
+          btn.style.transform = 'translate(' + (x - 0.5) * strength + 'px, ' + (y - 0.5) * strength + 'px)';
+        }
+        btn.style.setProperty('--mx', x * 100 + '%');
+        btn.style.setProperty('--my', y * 100 + '%');
+      });
+
+      btn.addEventListener('pointerleave', function () {
+        btn.style.transform = '';
+      });
+
+      btn.addEventListener('click', function (e) {
+        if (reduceMotion) return;
+        var box = inner.getBoundingClientRect();
+        var ripple = document.createElement('span');
+        ripple.className = 'glow-ripple';
+        ripple.setAttribute('aria-hidden', 'true');
+        // 키보드(Enter)로 누르면 가운데에서 퍼져요
+        var x = e.clientX ? e.clientX - box.left : box.width / 2;
+        var y = e.clientY ? e.clientY - box.top : box.height / 2;
+        ripple.style.left = x + 'px';
+        ripple.style.top = y + 'px';
+        inner.insertBefore(ripple, inner.querySelector('svg'));
+        setTimeout(function () { ripple.remove(); }, 700);
+      });
+    });
+  </script>
+</body>
+</html>
