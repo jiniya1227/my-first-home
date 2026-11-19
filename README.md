@@ -1,2 +1,2 @@
-# my-first-home
-나의 첫 홈페이지
+# first-home
+부모님 첫 홈페이지
