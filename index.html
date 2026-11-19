@@ -11,10 +11,19 @@
       margin: 0;
       padding: 24px 16px;
       box-sizing: border-box;
-      background-color: #fff7e8;
-      background-image: linear-gradient(180deg, #fff7e8 0%, #fbeff3 50%, #efeafb 100%);
-      color: #2f2a3a;
+      background-color: #efe5d8;
+      color: #3b2c22;
       text-align: center;
+    }
+    /* 배경 그림: 화면에 고정해 두고, 위에 베이지색을 반쯤 비치게 덮어 글자가 잘 읽히게 해요 */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background:
+        linear-gradient(180deg, rgba(246, 239, 230, 0.62) 0%, rgba(232, 218, 199, 0.55) 55%, rgba(214, 192, 164, 0.62) 100%),
+        url("background.webp") center / cover no-repeat;
     }
     .profile {
       width: 200px;
@@ -25,7 +34,7 @@
     .email {
       font-family: 'Dancing Script', cursive;
       font-size: 28px;
-      color: #333333;
+      color: #5a4334;
       text-decoration: none;
     }
 
@@ -47,8 +56,10 @@
       overflow: hidden;
       transform: rotateX(calc(var(--ty) * -14deg)) rotateY(calc(var(--tx) * 18deg));
       box-shadow:
-        0 12px 28px rgba(0, 0, 0, 0.22),
-        0 0 calc(var(--hyp) * 36px) hsl(300 90% 62% / 0.45);
+        0 0 0 3px #f6efe6,
+        0 0 0 4px #b89a78,
+        0 14px 30px rgba(74, 52, 36, 0.28),
+        0 0 calc(var(--hyp) * 36px) hsl(36 80% 60% / 0.5);
     }
     .holo-inner .profile {
       display: block;
@@ -246,7 +257,7 @@
   </div>
 
   <h1>안녕하세요!</h1>
-  <p>여기는 부모님 첫 홈페이지예요.</p>
+  <p>함께 걸어온 모든 날이 꽃이었습니다.</p>
 
   <script>
     var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
