@@ -14,6 +14,8 @@
       background-color: #efe5d8;
       color: #3b2c22;
       text-align: center;
+      /* 배경 그림이 또렷해진 만큼, 글자 뒤에 밝은 빛을 살짝 깔아 잘 읽히게 해요 */
+      text-shadow: 0 0 10px rgba(255, 248, 238, 0.95), 0 0 2px rgba(255, 248, 238, 0.9);
     }
     /* 배경 그림: 화면에 고정해 두고, 위에 베이지색을 반쯤 비치게 덮어 글자가 잘 읽히게 해요 */
     body::before {
@@ -22,7 +24,7 @@
       inset: 0;
       z-index: -1;
       background:
-        linear-gradient(180deg, rgba(246, 239, 230, 0.62) 0%, rgba(232, 218, 199, 0.55) 55%, rgba(214, 192, 164, 0.62) 100%),
+        linear-gradient(180deg, rgba(246, 239, 230, 0.42) 0%, rgba(232, 218, 199, 0.36) 55%, rgba(214, 192, 164, 0.42) 100%),
         url("background.webp") center / cover no-repeat;
     }
     .profile {
@@ -203,6 +205,16 @@
     .blog-btn svg text {
       font-family: Arial, sans-serif;
       font-weight: 900;
+    }
+
+    .message {
+      font-size: 17px;
+      font-weight: 600;
+    }
+
+    /* 버튼·플레이어 안 글자에는 빛 그림자를 빼요 */
+    .icon-row, .player {
+      text-shadow: none;
     }
 
     /* ===== 배경 음악 플레이어 ===== */
@@ -394,7 +406,7 @@
   </div>
 
   <h1>안녕하세요!</h1>
-  <p>함께 걸어온 모든 날이 꽃이었습니다.</p>
+  <p class="message">함께 걸어온 모든 날이 꽃이었습니다.</p>
 
   <script>
     var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
